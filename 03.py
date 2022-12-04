@@ -33,19 +33,13 @@ class Solution:
         self.modified = modified
         self.dev = dev
 
-    def split_items(self, items):
-        p1 = set(items[0:len(items) >> 1])
-        p2 = set(items[len(items) >> 1:])
-        return (p1, p2)
-
     def priority(self, t):
         return ord(t) - 96 if t >= "a" else ord(t) - 38
 
     def first_part(self):
         total = 0
         for items in self.data:
-            p1, p2 = self.split_items(items)
-            duplicate = p1.intersection(p2)
+            duplicate = set(items[0:len(items) >> 1]) & set(items[len(items) >> 1:])
             assert len(duplicate) == 1
             v = self.priority(duplicate.pop())
             total += v
@@ -56,7 +50,7 @@ class Solution:
         for group in batched(self.data, 3):
             shared = set(group.pop())
             while group:
-                shared = shared.intersection(set(group.pop()))
+                shared &= set(group.pop())
             assert len(shared) == 1
             v = self.priority(shared.pop())
             total += v
