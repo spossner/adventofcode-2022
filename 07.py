@@ -3,7 +3,6 @@ import sys
 import math
 import operator
 import re
-import timeit
 from collections import deque, defaultdict, namedtuple, Counter
 from functools import total_ordering, reduce
 from itertools import permutations, zip_longest, count
@@ -18,29 +17,43 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+File = namedtuple('File', ['name', 'size'])
 
-class SlidingWindow:
-    def __init__(self, arr):
-        self.window = defaultdict(int)
-        self.length = 0
-        for v in arr:
-            self.add(v)
 
-    def add(self, i):
-        self.window[i] += 1
-        if self.window[i] == 1:
-            self.length += 1
+class Folder:
+    def __init__(self, name, parent=None):
+        self.name = name
+        self.parent = parent
+        self.files = []
+        self.sub_folders = []
 
-    def delete(self, i):
-        self.window[i] -= 1
-        if self.window[i] == 0:
-            self.length -= 1
+    def add_file(self, name, size):
+        self.files.append(File(name, size))
 
-    def __len__(self):
-        return self.length
+    def get_folder(self, name):
+        if name == "..":
+            return self.parent;
+        return next(filter(lambda d: d.name == name, self.sub_folders))
 
-    def __str__(self):
-        return str(self.window)
+    def add_folder(self, name):
+        f = Folder(name, self)
+        self.sub_folders.append(f)
+        return f
+
+    def collect_sizes(self):
+        size = 0
+        details = []
+
+        for d in self.sub_folders:
+            s, d = d.collect_sizes()
+            size += s
+            details.extend(d)
+
+        for f in self.files:
+            size += f.size
+
+        details.append(size)
+        return size, details
 
 
 class Solution:
@@ -59,17 +72,34 @@ class Solution:
         self.dev = dev
 
     def first_part(self):
-        window_size = 14 if PART2 else 4
-        window = SlidingWindow(self.data[0:window_size])
-        for i in range(window_size, len(self.data)):
-            if len(window) == window_size:
-                return i
-            window.delete(self.data[i - window_size])
-            window.add(self.data[i])
-        return -1
+        root = Folder("/")
+        ptr = root
+        for line in self.data:
+            if line[0] == "$":
+                if line[1] == 'ls':
+                    continue
+                if line[2] == '/':
+                    ptr = root
+                    continue
+                ptr = ptr.get_folder(line[2])
+            else:
+                if line[0] == "dir":
+                    ptr.add_folder(line[1])
+                else:
+                    ptr.add_file(line[1], int(line[0]))
+        size, details = root.collect_sizes()
+        print(sum(filter(lambda s: s <= 100000, details)))
+        return size, details
 
     def second_part(self):
-        return self.first_part()
+        size, details = self.first_part()
+        total = 70_000_000
+        needed = 30_000_000
+        unused = total - size
+        missing = needed - unused
+        for s in sorted(details):
+            if s >= missing:
+                return s
 
 
 if __name__ == '__main__':
@@ -81,8 +111,8 @@ if __name__ == '__main__':
     PART2 = True
 
     STRIP = True
-    SPLIT_LINES = False
-    SPLIT_CHAR = None
+    SPLIT_LINES = True
+    SPLIT_CHAR = ' '
     DATA = None
     AOC_SESSION = os.environ.get('AOC_SESSION')
 
@@ -99,7 +129,4 @@ if __name__ == '__main__':
                 f.write(DATA)
 
     s = Solution(DATA, PART2, DEV, STRIP, SPLIT_LINES, SPLIT_CHAR)
-    start = timeit.default_timer()
     print(s.first_part() if not PART2 else s.second_part())
-    end = timeit.default_timer()
-    print(f"took {end - start} s")
