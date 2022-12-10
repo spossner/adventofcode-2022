@@ -44,7 +44,7 @@ class Solution:
         heap = deque()
         total = 0
 
-        display = [["." for _ in range(40)] for _ in range(6)]
+        display = [[" " for _ in range(40)] for _ in range(6)]
 
         for cycle in range(1, 241):
             if blocked == 0 and ptr < len(self.data):
@@ -65,7 +65,7 @@ class Solution:
             pos = cycle - 1
             if abs((pos % 40) - reg["x"]) < 2:
                 # print(f"setting {pos}: {int(pos / 40)}, {pos % 40} of {display}")
-                display[int(pos / 40)][pos % 40] = "#"
+                display[int(pos / 40)][pos % 40] = "█"
 
             if blocked > 0:
                 blocked -= 1
