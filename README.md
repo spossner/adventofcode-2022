@@ -32,3 +32,9 @@ custom paths in interpreter settings. Therefore
 - choose Show all...
 - switch to the tree icon "Show interpreter paths"
 - add a custom path to aoc project
+
+## PUZZLES
+
+### Day 10
+
+CPU to control a cathode-ray
