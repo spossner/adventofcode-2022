@@ -14,8 +14,8 @@ import networkx as nx
 import numpy as np
 from aoc import Point, Rect, NORTH, rot_ccw, rot_cw, translate
 from dotenv import load_dotenv
-load_dotenv()
 
+load_dotenv()
 
 
 class Solution:
@@ -34,6 +34,7 @@ class Solution:
         self.dev = dev
 
     def first_part(self):
+        print(self.data)
         pass
 
     def second_part(self):
@@ -52,7 +53,7 @@ if __name__ == '__main__':
     SPLIT_LINES = True
     SPLIT_CHAR = None
     DATA = None
-    AOC_SESSION=os.environ.get('AOC_SESSION')
+    AOC_SESSION = os.environ.get('AOC_SESSION')
 
     DATA_URL = f"https://adventofcode.com/2022/day/{int(script)}/input"
 
@@ -67,4 +68,4 @@ if __name__ == '__main__':
                 f.write(DATA)
 
     s = Solution(DATA, PART2, DEV, STRIP, SPLIT_LINES, SPLIT_CHAR)
-    print(s.first_part() if not PART2 else s.second_part())
+    print("RESULT", s.first_part() if not PART2 else s.second_part())
