@@ -46,7 +46,7 @@ class Solution:
     def first_part(self, part1=True):
         monkeys = []
         common_check = 1
-        for rows in batched(self.data, 6):
+        for rows in batched(self.data, 7):
             print(rows)
             monkey = Monkey(
                 get_ints(rows[1]),
