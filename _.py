@@ -33,12 +33,14 @@ class Solution:
         self.modified = modified
         self.dev = dev
 
-    def first_part(self):
+    def first_part(self, is_part1=True):
+        result = 0
         print(self.data)
-        pass
+
+        return result
 
     def second_part(self):
-        return self.first_part()
+        return self.first_part(False)
 
 
 if __name__ == '__main__':
