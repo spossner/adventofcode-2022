@@ -44,7 +44,7 @@ class Solution:
         dx = p1.x - p2.x
         dy = p1.y - p2.y
         if abs(dx) < 2 and abs(dy) < 2:
-            print(p1, p2, "skpped")
+            print(p1, p2, "skipped")
             return p2
 
         dx = (dx / 2.0)
@@ -71,11 +71,11 @@ class Solution:
         seen = set()
         knots = [Point(0, 0) for _ in range(knot_count)]
         print(knots)
-        seen.add(knots[-1])  # last know is tail
+        seen.add(knots[-1])  # last knot is tail
         for move in self.data:
             for i in range(int(move[1])):
                 knots[0] = translate(knots[0], DIRS[move[0]])
-                for i in range(1, knot_count):
+                for i in range(1, len(knots)):
                     knots[i] = self.calculate_new_pos(knots[i - 1], knots[i])
                 seen.add(knots[-1])  # finally store seen position of tail
         return len(seen)
