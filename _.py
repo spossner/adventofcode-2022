@@ -3,44 +3,52 @@ import sys
 import math
 import operator
 import re
-from collections import deque, defaultdict, namedtuple, Counter
-from functools import total_ordering, reduce
-from itertools import permutations, zip_longest, count
+from collections import *
+from functools import *
+from itertools import *
 from os.path import exists
 import bisect
 
 import requests
 import networkx as nx
 import numpy as np
-from aoc import Point, Rect, NORTH, rot_ccw, rot_cw, translate
+from aoc import *
 from dotenv import load_dotenv
 
 load_dotenv()
 
+DEV = True
+PART2 = False
+
+STRIP = True
+SPLIT_LINES = True
+SPLIT_CHAR = None
+DATA = None
+AOC_SESSION = os.environ.get('AOC_SESSION')
+YEAR = 2022
+
 
 class Solution:
-    def __init__(self, data, modified=False, dev=False, do_strip=False, do_splitlines=True, split_char=None):
-        if data and do_strip and type(data) == str:
+    def __init__(self, data):
+        if data and STRIP and type(data) == str:
             data = data.strip()
-        if data and do_splitlines and type(data) == str:
+        if data and SPLIT_LINES and type(data) == str:
             data = data.splitlines()
-        if data and split_char is not None:
-            if split_char == '':
-                data = [list(row) for row in data] if do_splitlines else list(data)
+        if data and SPLIT_CHAR is not None:
+            if SPLIT_CHAR == '':
+                data = [list(row) for row in data] if SPLIT_LINES else list(data)
             else:
-                data = [row.split(split_char) for row in data] if do_splitlines else data.split(split_char)
+                data = [row.split(SPLIT_CHAR) for row in data] if SPLIT_LINES else data.split(SPLIT_CHAR)
         self.data = data
-        self.modified = modified
-        self.dev = dev
 
-    def first_part(self, is_part1=True):
+    def first_part(self):
         result = 0
         print(self.data)
 
         return result
 
     def second_part(self):
-        return self.first_part(False)
+        return self.first_part()
 
 
 if __name__ == '__main__':
@@ -48,16 +56,7 @@ if __name__ == '__main__':
     if '-' in script:
         script = script.split('-')[0]
 
-    DEV = True
-    PART2 = False
-
-    STRIP = True
-    SPLIT_LINES = True
-    SPLIT_CHAR = None
-    DATA = None
-    AOC_SESSION = os.environ.get('AOC_SESSION')
-
-    DATA_URL = f"https://adventofcode.com/2022/day/{int(script)}/input"
+    DATA_URL = f"https://adventofcode.com/{YEAR}/day/{int(script)}/input"
 
     if not DATA:
         file_name = f"{script}-dev{DEV if type(DEV) != bool else ''}.txt" if DEV else f"{script}.txt"
@@ -69,5 +68,6 @@ if __name__ == '__main__':
             with open(file_name, "w") as f:
                 f.write(DATA)
 
-    s = Solution(DATA, PART2, DEV, STRIP, SPLIT_LINES, SPLIT_CHAR)
+    print(f"DAY {int(script)}")
+    s = Solution(DATA)
     print("RESULT", s.first_part() if not PART2 else s.second_part())
