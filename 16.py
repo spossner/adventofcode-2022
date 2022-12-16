@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DEV = False
-PART2 = False
+PART2 = True
 
 STRIP = True
 SPLIT_LINES = True
@@ -85,7 +85,43 @@ class Solution:
         return result
 
     def second_part(self):
-        return self.first_part()
+        result = 0
+        valves = self.get_valves()
+        seen = set()
+        queue = deque()
+        queue.append(("AA", ("AA",), "AA", ("AA",), tuple(), 0))
+        for minute_half in range(0, 52):
+            minute = (minute_half >> 1) + 1
+            print(f"{minute}: {len(queue)}")
+            for _ in range(len(queue)):
+                state = queue.popleft()
+                valve, walked, e_valve, e_walked, opened, total = state
+                current_valve = e_valve if minute_half % 2 else valve
+                just_walked = e_walked if minute_half % 2 else walked
+                rate, neighbours = valves[current_valve]
+                key = min(valve, e_valve) + "-" + max(valve, e_valve) + "-" + "".join(sorted(opened))
+                if (key in seen):
+                    continue
+                seen.add(key)
+
+                if rate > 0 and current_valve not in opened:
+                    pressure = (26 - minute) * rate
+                    new_total = total + pressure
+                    if new_total > result:
+                        result = new_total
+                    if minute_half % 2:
+                        queue.append(
+                            (valve, walked, current_valve, (current_valve,), opened + (current_valve,), new_total))
+                    else:
+                        queue.append(
+                            (current_valve, (current_valve,), e_valve, e_walked, opened + (current_valve,), new_total))
+                for n in neighbours:
+                    if n not in just_walked:
+                        if minute_half % 2:
+                            queue.append((valve, walked, n, just_walked + (current_valve,), opened, total))
+                        else:
+                            queue.append((n, just_walked + (current_valve,), e_valve, e_walked, opened, total))
+        return result
 
 
 if __name__ == '__main__':
