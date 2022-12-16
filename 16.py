@@ -85,6 +85,7 @@ class Solution:
         return result
 
     def second_part(self):
+        MAX_QUEUE = 1000  # funky -> try to only work with the most promising 500 options
         result = 0
         valves = self.get_valves()
         seen = set()
@@ -93,6 +94,12 @@ class Solution:
         for minute_half in range(0, 52):
             minute = (minute_half >> 1) + 1
             print(f"{minute}: {len(queue)}")
+
+            # if MAX_QUEUE performance hack, just keep the most promising entries
+            if MAX_QUEUE and minute_half % 2 == 0 and len(queue) > MAX_QUEUE:
+                # only keep entries with highest total so far
+                queue = deque(sorted(queue, key=lambda v: v[-1], reverse=True)[:MAX_QUEUE])
+
             for _ in range(len(queue)):
                 state = queue.popleft()
                 valve, walked, e_valve, e_walked, opened, total = state
