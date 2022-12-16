@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DEV = False
+DEV = True
 PART2 = True
 
 STRIP = True
@@ -41,7 +41,7 @@ class Solution:
         self.modified = modified
         self.dev = dev
 
-    def map_from_data(self):
+    def first_part(self):
         beacons = set()
         sensors = set()
         bounds = Rect()
@@ -52,22 +52,15 @@ class Solution:
             s = Point(sx, sy)
             b = Point(bx, by)
             d = manhattan_distance(s, b)
-            bounds.extend(s)
-            bounds.extend(b)
-            max_bounds.extend(Point(sx - d, sy))
-            max_bounds.extend(Point(sx + d, sy))
-            max_bounds.extend(s)
-            max_bounds.extend(b)
+            bounds.extend(s, b)
+            max_bounds.extend(s, b, Point(sx - d, sy), Point(sx + d, sy))
             beacons.add(b)
             sensors.add(s)
             left_most[sx - d].append([s, 1, (d << 1) + 1])
-        return bounds, max_bounds, left_most, beacons, sensors
 
-    def first_part(self):
-        bounds, max_bounds, left_most, beacons, sensors = self.map_from_data()
         print(bounds, max_bounds, left_most, beacons, sensors)
-        no = 10 if DEV else 2000000
-        max_width = 20 if DEV else 4000000
+        no = 10 if DEV else 2_000_000
+        max_width = 20 if DEV else 4_000_000
         diamonds = []
         row = defaultdict(int)
         print("scan lines")
@@ -99,7 +92,7 @@ class Solution:
             for r in col_ranges[1:]:
                 if r.start <= large_range.stop:
                     large_range = range(large_range.start, max(large_range.stop, r.stop))
-            if x >= 0 and x <= max_width:
+            if 0 <= x <= max_width:
                 if 0 not in large_range or max_width not in large_range:
                     hole = Point(x, large_range.stop)
                     print(f"\nfound hole at ({hole}:", hole.x * 4_000_000 + hole.y)
