@@ -10,8 +10,6 @@ from os.path import exists
 import bisect
 
 import requests
-import networkx as nx
-import numpy as np
 from aoc import *
 from dotenv import load_dotenv
 
@@ -26,6 +24,10 @@ SPLIT_CHAR = None
 DATA = None
 AOC_SESSION = os.environ.get('AOC_SESSION')
 YEAR = 2022
+
+
+def p(*args, end="\n"):
+    if DEV: print(args, end=end)
 
 
 class Solution:
