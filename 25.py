@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DEV = True
+DEV = False
 PART2 = False
 
 STRIP = True
@@ -24,6 +24,22 @@ SPLIT_CHAR = None
 DATA = None
 AOC_SESSION = os.environ.get('AOC_SESSION')
 YEAR = 2022
+
+SNA2DEC = {
+    '2': 2,
+    '1': 1,
+    '0': 0,
+    '-': -1,
+    "=": -2
+}
+
+DEC2SNA = {
+    0: ('0', 0),
+    1: ('1', 0),
+    2: ('2', 0),
+    3: ('=', 1),
+    4: ('-', 1)
+}
 
 
 class Solution:
@@ -39,11 +55,24 @@ class Solution:
                 data = [row.split(SPLIT_CHAR) for row in data] if SPLIT_LINES else data.split(SPLIT_CHAR)
         self.data = data
 
-    def first_part(self):
+    def sna2dec(self, snafu):
         result = 0
-        print(self.data)
-
+        p = 1
+        for c in reversed(snafu):
+            result += (SNA2DEC[c] * p)
+            p *= 5
         return result
+
+    def dec2sna(self, n):
+        result = []
+        while n > 0:
+            r = n % 5
+            result.append(DEC2SNA[r][0])
+            n = n // 5 + DEC2SNA[r][1]
+        return "".join(reversed(result))
+
+    def first_part(self):
+        return self.dec2sna(sum(map(lambda s: self.sna2dec(s), self.data)))
 
     def second_part(self):
         return self.first_part()
